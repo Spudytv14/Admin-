@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spudy Intelligence Group | Analytics Dashboard</title>
+    <title>Spudy Intelligence Group | Premium Access</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Fonts: Inter for UI, Playfair Display for Premium Headings -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -20,15 +21,32 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
                     },
                     colors: {
                         spudy: {
-                            dark: '#000000',
-                            primary: '#6366f1',
-                            secondary: '#8b5cf6',
-                            accent: '#d946ef',
-                            surface: '#111827',
-                            bg: '#0B0F19',
+                            dark: '#050505',
+                            gold: '#D4AF37',       // Classic Metallic Gold
+                            goldlight: '#FCD34D',  // Light Amber
+                            golddark: '#92400E',   // Dark Amber/Bronze
+                            surface: '#121212',    // Rich Black
+                            bg: '#000000',         // Pure Black for contrast
+                            glass: 'rgba(20, 20, 20, 0.7)'
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-1000px 0' },
+                            '100%': { backgroundPosition: '1000px 0' }
                         }
                     }
                 }
@@ -39,20 +57,21 @@
     <style>
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #000;
         }
         ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
+            background: #333;
+            border-radius: 3px;
+            border: 1px solid #D4AF37;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #D4AF37;
         }
 
-        /* Subtle Background Gradient */
+        /* Golden Glow Background */
         body::before {
             content: '';
             position: absolute;
@@ -60,607 +79,541 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08), transparent 25%),
-                        radial-gradient(circle at 85% 30%, rgba(217, 70, 239, 0.08), transparent 25%);
+            background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.15), transparent 40%);
             pointer-events: none;
             z-index: -1;
         }
         
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
-            color: #6366f1;
-            border-right: 2px solid #6366f1;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%);
+            color: #D4AF37;
+            border-right: 2px solid #D4AF37;
+        }
+
+        .gold-text-gradient {
+            background: linear-gradient(to right, #FCD34D, #D4AF37, #F59E0B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        .fade-in {
-            animation: fadeIn 0.4s ease-in-out;
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .premium-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 10px 40px -10px rgba(212, 175, 55, 0.3);
         }
     </style>
 </head>
-<body class="bg-spudy-bg text-slate-200 font-sans antialiased overflow-hidden relative selection:bg-spudy-primary selection:text-white">
+<body class="bg-spudy-bg text-slate-300 font-sans antialiased overflow-hidden relative selection:bg-spudy-gold selection:text-black">
 
     <!-- Login / Welcome Dashboard -->
-    <div id="login-overlay" class="fixed inset-0 z-50 bg-spudy-bg flex items-center justify-center p-4">
+    <div id="login-overlay" class="fixed inset-0 z-50 bg-black flex items-center justify-center p-4">
         <div class="absolute inset-0 z-0">
-             <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.15),transparent_50%)]"></div>
-             <!-- Animated Mesh Grid Background -->
-             <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(#6366f1 1px, transparent 1px), linear-gradient(to right, #6366f1 1px, transparent 1px); background-size: 40px 40px;"></div>
+             <div class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.1),transparent_60%)]"></div>
+             <!-- Animated Particles/Stars could go here -->
         </div>
 
-        <div class="bg-spudy-surface/80 backdrop-blur-xl p-10 rounded-3xl shadow-2xl border border-slate-700/50 w-full max-w-lg relative z-10 flex flex-col items-center">
+        <div class="glass-panel p-10 rounded-3xl w-full max-w-lg relative z-10 flex flex-col items-center border border-spudy-gold/30">
 
-            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-spudy-primary to-spudy-secondary flex items-center justify-center text-white font-bold text-4xl mb-6 shadow-xl shadow-spudy-primary/30 ring-4 ring-white/5">
-                S
+            <div class="w-24 h-24 rounded-full border-2 border-spudy-gold/50 flex items-center justify-center mb-6 relative">
+                <div class="absolute inset-0 rounded-full border border-spudy-gold animate-ping opacity-20"></div>
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-spudy-gold to-spudy-golddark flex items-center justify-center text-black font-serif font-bold text-4xl shadow-lg shadow-spudy-gold/20">
+                    S
+                </div>
             </div>
 
-            <h1 class="text-3xl font-bold text-white tracking-tight mb-2">Welcome Dashboard</h1>
-            <p class="text-slate-400 text-center mb-8">Spudy Intelligence Access Portal. <br>Secure login required to view data.</p>
+            <h1 class="text-4xl font-serif font-bold text-white tracking-wide mb-2">Premium Access</h1>
+            <p class="text-spudy-gold/80 text-center mb-8 uppercase tracking-widest text-xs">Spudy Intelligence Group</p>
 
-            <form id="login-form" class="space-y-5 w-full" onsubmit="handleLogin(event)">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+            <form id="login-form" class="space-y-6 w-full" onsubmit="handleLogin(event)">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-spudy-gold/50 group-focus-within:text-spudy-gold transition-colors">
                         <i class="fa-solid fa-envelope"></i>
                     </div>
                     <input type="email" id="email" required
-                        class="w-full bg-slate-900/60 border border-slate-700/80 text-white text-sm rounded-xl focus:ring-2 focus:ring-spudy-primary focus:border-transparent block pl-10 p-3.5 outline-none transition-all placeholder-slate-600 shadow-inner"
-                        placeholder="Enter authorized email">
+                        class="w-full bg-black/50 border border-spudy-gold/30 text-white text-sm rounded-none focus:ring-1 focus:ring-spudy-gold focus:border-spudy-gold block pl-10 p-4 outline-none transition-all placeholder-gray-600"
+                        placeholder="Authorized Email">
                 </div>
 
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-spudy-gold/50 group-focus-within:text-spudy-gold transition-colors">
                         <i class="fa-solid fa-lock"></i>
                     </div>
                     <input type="password" id="password" required
-                        class="w-full bg-slate-900/60 border border-slate-700/80 text-white text-sm rounded-xl focus:ring-2 focus:ring-spudy-primary focus:border-transparent block pl-10 p-3.5 outline-none transition-all placeholder-slate-600 shadow-inner"
-                        placeholder="Enter password">
+                        class="w-full bg-black/50 border border-spudy-gold/30 text-white text-sm rounded-none focus:ring-1 focus:ring-spudy-gold focus:border-spudy-gold block pl-10 p-4 outline-none transition-all placeholder-gray-600"
+                        placeholder="Security Key">
                 </div>
 
-                <div id="login-error" class="hidden flex items-center p-3 text-xs text-red-300 bg-red-900/20 border border-red-500/30 rounded-lg">
-                    <i class="fa-solid fa-circle-exclamation mr-2"></i> Invalid credentials provided.
+                <div id="login-error" class="hidden flex items-center justify-center p-3 text-xs text-red-300 border border-red-900/50 bg-red-900/10">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i> Invalid credentials.
                 </div>
 
                 <button type="submit"
-                    class="w-full text-white bg-gradient-to-r from-spudy-primary to-spudy-secondary hover:from-blue-600 hover:to-indigo-600 focus:ring-4 focus:outline-none focus:ring-blue-800 font-semibold rounded-xl text-sm px-5 py-4 text-center transition-all shadow-lg shadow-spudy-primary/30 transform hover:-translate-y-0.5">
-                    Enter System <i class="fa-solid fa-arrow-right ml-2"></i>
+                    class="w-full text-black bg-gradient-to-r from-spudy-gold via-yellow-400 to-spudy-gold hover:via-yellow-300 font-bold font-serif uppercase tracking-wider rounded-none text-sm px-5 py-4 text-center transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)]">
+                    Authenticate
                 </button>
             </form>
 
-            <div class="mt-8 pt-6 border-t border-slate-700/50 w-full text-center">
-                <p class="text-xs text-slate-500">Authorized Personnel Only • Spudy Intelligence Group</p>
+            <div class="mt-8 pt-6 border-t border-spudy-gold/20 w-full text-center">
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Restricted Area • Gold Tier Clearance</p>
             </div>
         </div>
     </div>
 
-    <div class="flex h-screen blur-sm transition-all duration-500" id="main-layout">
+    <div class="flex h-screen blur-sm transition-all duration-700" id="main-layout">
 
-        <aside class="w-64 bg-spudy-surface/80 backdrop-blur-md border-r border-slate-700/50 hidden md:flex flex-col z-10 transition-all duration-300" id="sidebar">
-            <div class="h-16 flex items-center px-6 border-b border-slate-700/50">
-                <div class="w-8 h-8 rounded bg-gradient-to-br from-spudy-primary to-spudy-secondary flex items-center justify-center text-white font-bold mr-3 shadow-lg shadow-spudy-primary/20">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-black border-r border-spudy-gold/20 hidden md:flex flex-col z-20 transition-all duration-300 relative">
+            <!-- Sidebar Gold Glow -->
+            <div class="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-spudy-gold/10 to-transparent pointer-events-none"></div>
+
+            <div class="h-20 flex items-center px-8 border-b border-spudy-gold/20">
+                <div class="w-8 h-8 rounded-sm bg-gradient-to-br from-spudy-gold to-yellow-600 flex items-center justify-center text-black font-serif font-bold mr-3">
                     S
                 </div>
                 <div>
-                    <h1 class="font-bold text-slate-200 text-sm leading-tight tracking-wide">SPUDY</h1>
-                    <p class="text-[10px] text-slate-400 font-medium tracking-wider">INTELLIGENCE GROUP</p>
+                    <h1 class="font-serif font-bold text-white text-lg tracking-wide">SPUDY</h1>
+                    <p class="text-[9px] text-spudy-gold uppercase tracking-[0.2em]">Premium</p>
                 </div>
             </div>
 
-            <nav class="flex-1 overflow-y-auto py-4">
-                <div class="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Analytics</div>
+            <nav class="flex-1 overflow-y-auto py-8 space-y-1">
+                <div class="px-8 mb-4 text-[10px] font-bold text-spudy-gold/60 uppercase tracking-widest">Dashboard</div>
                 
-                <a href="#" onclick="switchView('overview')" id="nav-overview" class="nav-item active flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-chart-pie w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Overview</span>
+                <a href="#" onclick="switchView('overview')" id="nav-overview" class="nav-item active flex items-center px-8 py-4 text-gray-400 hover:text-white transition-all group">
+                    <i class="fa-solid fa-chart-pie w-6 group-hover:text-spudy-gold transition-colors"></i>
+                    <span class="ml-2 text-sm font-medium tracking-wide">Overview</span>
                 </a>
 
-                <a href="#" onclick="switchView('social')" id="nav-social" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-share-nodes w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Social Media</span>
+                <a href="#" onclick="switchView('social')" id="nav-social" class="nav-item flex items-center px-8 py-4 text-gray-400 hover:text-white transition-all group">
+                    <i class="fa-solid fa-share-nodes w-6 group-hover:text-spudy-gold transition-colors"></i>
+                    <span class="ml-2 text-sm font-medium tracking-wide">Social Media</span>
                 </a>
 
-                <a href="#" onclick="switchView('web')" id="nav-web" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-globe w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Web Analytics</span>
+                <a href="#" onclick="switchView('web')" id="nav-web" class="nav-item flex items-center px-8 py-4 text-gray-400 hover:text-white transition-all group">
+                    <i class="fa-solid fa-globe w-6 group-hover:text-spudy-gold transition-colors"></i>
+                    <span class="ml-2 text-sm font-medium tracking-wide">Web Analytics</span>
                 </a>
 
-                <div class="mt-6 px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Products</div>
+                <div class="mt-8 px-8 mb-4 text-[10px] font-bold text-spudy-gold/60 uppercase tracking-widest">Assets</div>
 
-                <a href="#" onclick="switchView('games')" id="nav-games" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-gamepad w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Spudy Games</span>
+                <a href="#" onclick="switchView('games')" id="nav-games" class="nav-item flex items-center px-8 py-4 text-gray-400 hover:text-white transition-all group">
+                    <i class="fa-solid fa-gamepad w-6 group-hover:text-spudy-gold transition-colors"></i>
+                    <span class="ml-2 text-sm font-medium tracking-wide">Spudy Games</span>
                 </a>
 
-                <a href="#" onclick="switchView('library')" id="nav-library" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-book-open w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Spudy Library</span>
+                <a href="#" onclick="switchView('library')" id="nav-library" class="nav-item flex items-center px-8 py-4 text-gray-400 hover:text-white transition-all group">
+                    <i class="fa-solid fa-book-open w-6 group-hover:text-spudy-gold transition-colors"></i>
+                    <span class="ml-2 text-sm font-medium tracking-wide">Library</span>
                 </a>
 
-                <div class="mt-6 px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">System</div>
+                <div class="mt-8 px-8 mb-4 text-[10px] font-bold text-spudy-gold/60 uppercase tracking-widest">Admin</div>
 
-                <a href="#" onclick="switchView('reports')" id="nav-reports" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-table-list w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Detailed Reports</span>
-                </a>
-
-                <a href="#" onclick="exportReport()" class="nav-item flex items-center px-6 py-3 text-slate-400 hover:bg-white/5 hover:text-slate-200 transition-colors">
-                    <i class="fa-solid fa-file-export w-5"></i>
-                    <span class="ml-3 text-sm font-medium">Export Data</span>
+                <a href="#" onclick="switchView('reports')" id="nav-reports" class="nav-item flex items-center px-8 py-4 text-gray-400 hover:text-white transition-all group">
+                    <i class="fa-solid fa-table-list w-6 group-hover:text-spudy-gold transition-colors"></i>
+                    <span class="ml-2 text-sm font-medium tracking-wide">Reports</span>
                 </a>
             </nav>
 
-            <div class="p-4 border-t border-slate-700/50">
+            <div class="p-6 border-t border-spudy-gold/20 bg-gradient-to-t from-spudy-gold/5 to-transparent">
                 <div class="flex items-center">
-                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" class="w-8 h-8 rounded-full ring-2 ring-slate-700" alt="Admin">
+                    <div class="w-10 h-10 rounded-full border border-spudy-gold p-0.5">
+                        <img src="https://ui-avatars.com/api/?name=Matipaishe&background=D4AF37&color=000" class="w-full h-full rounded-full" alt="Admin">
+                    </div>
                     <div class="ml-3">
-                        <p class="text-xs font-semibold text-slate-200">System Admin</p>
-                        <p class="text-[10px] text-emerald-500 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span> Online</p>
+                        <p class="text-xs font-serif font-bold text-white tracking-wide">Admin Matipaishe</p>
+                        <p class="text-[10px] text-spudy-gold flex items-center"><i class="fa-solid fa-circle text-[6px] mr-1 animate-pulse"></i> Online</p>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <main class="flex-1 flex flex-col h-screen overflow-hidden relative bg-spudy-bg">
             
-            <header class="h-16 bg-spudy-surface/80 backdrop-blur-md border-b border-slate-700/50 flex items-center justify-between px-8 shadow-sm z-10">
+            <!-- Topbar -->
+            <header class="h-20 bg-black/80 backdrop-blur-md border-b border-spudy-gold/20 flex items-center justify-between px-10 z-10 sticky top-0">
                 <div class="flex items-center">
-                    <button class="md:hidden mr-4 text-slate-400 hover:text-spudy-primary" onclick="toggleSidebar()">
+                    <button class="md:hidden mr-4 text-spudy-gold" onclick="toggleSidebar()">
                         <i class="fa-solid fa-bars text-xl"></i>
                     </button>
-                    <h2 class="text-xl font-bold text-slate-200" id="page-title">Dashboard Overview</h2>
+                    <div>
+                        <h2 class="text-xl font-serif font-bold text-white tracking-wide" id="page-title">Overview</h2>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest date-display">Loading Date...</p>
+                    </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
-                    <div class="hidden sm:flex items-center bg-slate-800/50 border border-slate-700/50 rounded-md px-3 py-1.5">
-                        <i class="fa-regular fa-calendar text-slate-400 text-xs mr-2"></i>
-                        <select class="bg-transparent text-sm text-slate-300 outline-none cursor-pointer" id="dateFilter" onchange="updateData()">
-                            <option value="7" class="bg-slate-800">Last 7 Days</option>
-                            <option value="30" selected class="bg-slate-800">Last 30 Days</option>
-                            <option value="90" class="bg-slate-800">Last Quarter</option>
-                            <option value="365" class="bg-slate-800">Year to Date</option>
+                <div class="flex items-center space-x-6">
+                    <div class="hidden sm:flex items-center border border-spudy-gold/30 px-4 py-2 bg-black/50">
+                        <i class="fa-regular fa-calendar text-spudy-gold text-xs mr-3"></i>
+                        <select class="bg-transparent text-xs text-gray-300 outline-none cursor-pointer uppercase tracking-wider font-semibold" id="dateFilter" onchange="updateData()">
+                            <option value="7" class="bg-black text-gray-300">Last 7 Days</option>
+                            <option value="30" selected class="bg-black text-gray-300">Last 30 Days</option>
+                            <option value="90" class="bg-black text-gray-300">Last Quarter</option>
                         </select>
                     </div>
 
-                    <button class="relative p-2 text-slate-400 hover:text-spudy-primary transition-colors">
-                        <i class="fa-regular fa-bell"></i>
-                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-slate-900"></span>
+                    <div class="w-px h-8 bg-spudy-gold/20"></div>
+
+                    <button class="relative text-gray-400 hover:text-spudy-gold transition-colors">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-600 rounded-full border border-black"></span>
+                    </button>
+
+                    <button class="text-gray-400 hover:text-spudy-gold transition-colors">
+                        <i class="fa-solid fa-gear text-lg"></i>
                     </button>
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-8 bg-spudy-bg" id="main-scroll">
-                
-                <div id="view-overview" class="view-section fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm hover:border-spudy-primary/50 transition-all duration-300 group">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <p class="text-xs font-semibold text-slate-400 uppercase">Total Interactions</p>
-                                    <h3 class="text-2xl font-bold text-white mt-1 group-hover:text-spudy-primary transition-colors">2.4M</h3>
-                                </div>
-                                <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20">
-                                    <i class="fa-solid fa-fingerprint"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-xs">
-                                <span class="text-emerald-400 font-bold flex items-center mr-2">
-                                    <i class="fa-solid fa-arrow-up mr-1"></i> 12.5%
-                                </span>
-                                <span class="text-slate-500">vs last period</span>
-                            </div>
-                        </div>
+            <div class="flex-1 overflow-y-auto p-10 relative" id="main-scroll">
+                <!-- Background decoration -->
+                <div class="absolute top-0 right-0 w-96 h-96 bg-spudy-gold/5 blur-[100px] pointer-events-none rounded-full"></div>
 
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm hover:border-spudy-primary/50 transition-all duration-300 group">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <p class="text-xs font-semibold text-slate-400 uppercase">Total Clicks</p>
-                                    <h3 class="text-2xl font-bold text-white mt-1 group-hover:text-spudy-primary transition-colors">854K</h3>
-                                </div>
-                                <div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg border border-cyan-500/20">
-                                    <i class="fa-solid fa-mouse-pointer"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center text-xs">
-                                <span class="text-emerald-400 font-bold flex items-center mr-2">
-                                    <i class="fa-solid fa-arrow-up mr-1"></i> 8.2%
-                                </span>
-                                <span class="text-slate-500">vs last period</span>
-                            </div>
-                        </div>
+                <div id="view-overview" class="view-section animate-fade-in-up">
 
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm hover:border-spudy-primary/50 transition-all duration-300 group">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <p class="text-xs font-semibold text-slate-400 uppercase">Games Active Users</p>
-                                    <h3 class="text-2xl font-bold text-white mt-1 group-hover:text-spudy-primary transition-colors">42.8K</h3>
-                                </div>
-                                <div class="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg border border-indigo-500/20">
-                                    <i class="fa-solid fa-gamepad"></i>
-                                </div>
+                    <!-- Welcome Hero Section -->
+                    <div class="w-full relative mb-12 rounded-sm overflow-hidden border-l-4 border-spudy-gold glass-panel p-8">
+                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center">
+                            <div>
+                                <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-2">Welcome, <span class="gold-text-gradient">Admin Matipaishe</span></h1>
+                                <p class="text-gray-400 max-w-xl text-sm leading-relaxed mt-4">
+                                    Your premium analytics dashboard is ready. Current system status is optimal. You have <span class="text-white font-bold">4 new reports</span> awaiting review.
+                                </p>
                             </div>
-                            <div class="flex items-center text-xs">
-                                <span class="text-emerald-400 font-bold flex items-center mr-2">
-                                    <i class="fa-solid fa-arrow-up mr-1"></i> 24%
-                                </span>
-                                <span class="text-slate-500">Growth explosion</span>
-                            </div>
-                        </div>
-
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm hover:border-spudy-primary/50 transition-all duration-300 group">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <p class="text-xs font-semibold text-slate-400 uppercase">Library Downloads</p>
-                                    <h3 class="text-2xl font-bold text-white mt-1 group-hover:text-spudy-primary transition-colors">15.2K</h3>
+                            <div class="mt-6 md:mt-0 flex space-x-4">
+                                <div class="text-center px-6 py-3 border border-spudy-gold/20 bg-black/40">
+                                    <div class="text-2xl font-bold text-white">98%</div>
+                                    <div class="text-[10px] text-spudy-gold uppercase tracking-wider">Server Uptime</div>
                                 </div>
-                                <div class="p-2 bg-orange-500/10 text-orange-400 rounded-lg border border-orange-500/20">
-                                    <i class="fa-solid fa-download"></i>
+                                <div class="text-center px-6 py-3 border border-spudy-gold/20 bg-black/40">
+                                    <div class="text-2xl font-bold text-white">12ms</div>
+                                    <div class="text-[10px] text-spudy-gold uppercase tracking-wider">Latency</div>
                                 </div>
-                            </div>
-                            <div class="flex items-center text-xs">
-                                <span class="text-red-400 font-bold flex items-center mr-2">
-                                    <i class="fa-solid fa-arrow-down mr-1"></i> 2.1%
-                                </span>
-                                <span class="text-slate-500">vs last period</span>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Shortcuts Grid -->
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-gray-800 pb-2">Quick Access Shortcuts</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                        <div onclick="switchView('social')" class="cursor-pointer group glass-panel p-6 text-center hover:bg-spudy-gold/10 transition-all duration-300 border border-gray-800 hover:border-spudy-gold/50">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-blue-900/30 text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-share-nodes text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-serif font-semibold">Social Stats</h4>
+                            <p class="text-xs text-gray-500 mt-1">View engagement</p>
+                        </div>
+                        <div onclick="switchView('games')" class="cursor-pointer group glass-panel p-6 text-center hover:bg-spudy-gold/10 transition-all duration-300 border border-gray-800 hover:border-spudy-gold/50">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-purple-900/30 text-purple-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-gamepad text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-serif font-semibold">Game Center</h4>
+                            <p class="text-xs text-gray-500 mt-1">Manage players</p>
+                        </div>
+                        <div onclick="switchView('library')" class="cursor-pointer group glass-panel p-6 text-center hover:bg-spudy-gold/10 transition-all duration-300 border border-gray-800 hover:border-spudy-gold/50">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-amber-900/30 text-amber-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-book-open text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-serif font-semibold">Library</h4>
+                            <p class="text-xs text-gray-500 mt-1">Check downloads</p>
+                        </div>
+                        <div onclick="switchView('reports')" class="cursor-pointer group glass-panel p-6 text-center hover:bg-spudy-gold/10 transition-all duration-300 border border-gray-800 hover:border-spudy-gold/50">
+                            <div class="w-12 h-12 mx-auto rounded-full bg-green-900/30 text-green-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-file-invoice text-xl"></i>
+                            </div>
+                            <h4 class="text-white font-serif font-semibold">Reports</h4>
+                            <p class="text-xs text-gray-500 mt-1">Export data</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Stats -->
+                    <h3 class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-6 border-b border-gray-800 pb-2">Performance Metrics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="glass-panel p-6 premium-card transition-all duration-300">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Total Interactions</p>
+                                    <h3 class="text-3xl font-serif font-bold text-white mt-2">2.4M</h3>
+                                </div>
+                                <div class="text-spudy-gold opacity-50"><i class="fa-solid fa-fingerprint text-2xl"></i></div>
+                            </div>
+                            <div class="w-full bg-gray-800 h-0.5 mb-2"><div class="bg-spudy-gold h-full" style="width: 75%"></div></div>
+                            <p class="text-xs text-emerald-500">+12.5% vs last week</p>
+                        </div>
+
+                        <div class="glass-panel p-6 premium-card transition-all duration-300">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Active Users</p>
+                                    <h3 class="text-3xl font-serif font-bold text-white mt-2">854K</h3>
+                                </div>
+                                <div class="text-spudy-gold opacity-50"><i class="fa-solid fa-users text-2xl"></i></div>
+                            </div>
+                            <div class="w-full bg-gray-800 h-0.5 mb-2"><div class="bg-spudy-gold h-full" style="width: 60%"></div></div>
+                            <p class="text-xs text-emerald-500">+8.2% vs last week</p>
+                        </div>
+
+                         <div class="glass-panel p-6 premium-card transition-all duration-300">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Revenue (Est)</p>
+                                    <h3 class="text-3xl font-serif font-bold text-white mt-2">$42.8K</h3>
+                                </div>
+                                <div class="text-spudy-gold opacity-50"><i class="fa-solid fa-sack-dollar text-2xl"></i></div>
+                            </div>
+                            <div class="w-full bg-gray-800 h-0.5 mb-2"><div class="bg-spudy-gold h-full" style="width: 85%"></div></div>
+                            <p class="text-xs text-emerald-500">+24% vs last week</p>
+                        </div>
+
+                         <div class="glass-panel p-6 premium-card transition-all duration-300">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Downloads</p>
+                                    <h3 class="text-3xl font-serif font-bold text-white mt-2">15.2K</h3>
+                                </div>
+                                <div class="text-spudy-gold opacity-50"><i class="fa-solid fa-download text-2xl"></i></div>
+                            </div>
+                            <div class="w-full bg-gray-800 h-0.5 mb-2"><div class="bg-red-500 h-full" style="width: 40%"></div></div>
+                            <p class="text-xs text-red-500">-2.1% vs last week</p>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                        <div class="lg:col-span-2 bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h3 class="text-lg font-bold text-slate-200 mb-4">Ecosystem Traffic Growth</h3>
-                            <div class="h-64">
+                        <div class="lg:col-span-2 glass-panel p-6 rounded-none border border-gray-800">
+                            <h3 class="text-lg font-serif font-bold text-white mb-6">Traffic Growth Trend</h3>
+                            <div class="h-80">
                                 <canvas id="chart-overview-main"></canvas>
                             </div>
                         </div>
 
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h3 class="text-lg font-bold text-slate-200 mb-4">Traffic Distribution</h3>
+                        <div class="glass-panel p-6 rounded-none border border-gray-800">
+                            <h3 class="text-lg font-serif font-bold text-white mb-6">Source Distribution</h3>
                             <div class="h-64 flex justify-center">
                                 <canvas id="chart-overview-pie"></canvas>
                             </div>
                         </div>
                     </div>
-
-                    <div class="bg-spudy-surface/60 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-                        <div class="px-6 py-4 border-b border-slate-700/50">
-                            <h3 class="font-bold text-slate-200">Top Performing Channels</h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-slate-400">
-                                <thead class="text-xs text-slate-500 uppercase bg-slate-800/50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3">Channel Name</th>
-                                        <th scope="col" class="px-6 py-3">Type</th>
-                                        <th scope="col" class="px-6 py-3">Users</th>
-                                        <th scope="col" class="px-6 py-3">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-right">Conversion</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="bg-transparent border-b border-slate-700/50 hover:bg-white/5 transition-colors">
-                                        <td class="px-6 py-4 font-medium text-slate-200">Spudy Games (Mobile)</td>
-                                        <td class="px-6 py-4">App</td>
-                                        <td class="px-6 py-4">24,500</td>
-                                        <td class="px-6 py-4"><span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-medium px-2.5 py-0.5 rounded">Trending</span></td>
-                                        <td class="px-6 py-4 text-right">18.5%</td>
-                                    </tr>
-                                    <tr class="bg-transparent border-b border-slate-700/50 hover:bg-white/5 transition-colors">
-                                        <td class="px-6 py-4 font-medium text-slate-200">Spudy Library Web</td>
-                                        <td class="px-6 py-4">Website</td>
-                                        <td class="px-6 py-4">12,100</td>
-                                        <td class="px-6 py-4"><span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-medium px-2.5 py-0.5 rounded">Stable</span></td>
-                                        <td class="px-6 py-4 text-right">8.2%</td>
-                                    </tr>
-                                    <tr class="bg-transparent hover:bg-white/5 transition-colors">
-                                        <td class="px-6 py-4 font-medium text-slate-200">Instagram Campaign</td>
-                                        <td class="px-6 py-4">Social</td>
-                                        <td class="px-6 py-4">8,400</td>
-                                        <td class="px-6 py-4"><span class="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-xs font-medium px-2.5 py-0.5 rounded">Review</span></td>
-                                        <td class="px-6 py-4 text-right">4.1%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 </div>
 
-                <div id="view-social" class="view-section hidden fade-in">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h3 class="text-lg font-bold text-slate-200 mb-4">Followers by Platform</h3>
+                <div id="view-social" class="view-section hidden animate-fade-in-up">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-8 border-l-4 border-spudy-gold pl-4">Social Media Intelligence</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div class="glass-panel p-6 border-t-2 border-spudy-gold">
+                            <h3 class="text-lg font-bold text-white mb-4">Followers by Platform</h3>
                             <canvas id="chart-social-bar"></canvas>
                         </div>
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h3 class="text-lg font-bold text-slate-200 mb-4">Engagement Rate (%)</h3>
+                        <div class="glass-panel p-6 border-t-2 border-spudy-gold">
+                            <h3 class="text-lg font-bold text-white mb-4">Engagement Rate (%)</h3>
                             <canvas id="chart-social-line"></canvas>
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
-                         <div class="bg-blue-600/90 text-white p-4 rounded-lg text-center backdrop-blur-sm shadow-lg shadow-blue-900/20 border border-blue-500/30">
-                            <i class="fa-brands fa-facebook text-2xl mb-2"></i>
-                            <div class="text-xs opacity-80 mb-1">Spudy Inspirational</div>
-                            <div class="text-xl font-bold">136</div>
-                            <div class="text-[10px] opacity-60">Followers (This Month)</div>
+                         <div class="glass-panel p-4 text-center hover:bg-blue-900/20 transition-colors">
+                            <i class="fa-brands fa-facebook text-2xl mb-2 text-blue-500"></i>
+                            <div class="text-xs opacity-60 mb-1">Spudy Inspirational</div>
+                            <div class="text-xl font-bold text-white">136</div>
                          </div>
 
-                         <div class="bg-green-500/90 text-white p-4 rounded-lg text-center backdrop-blur-sm shadow-lg shadow-green-900/20 border border-green-500/30">
-                            <i class="fa-brands fa-whatsapp text-2xl mb-2"></i>
-                            <div class="text-xs opacity-80 mb-1">WhatsApp Biz</div>
-                            <div class="text-xl font-bold">100</div>
-                            <div class="text-[10px] opacity-60">Active Chats</div>
+                         <div class="glass-panel p-4 text-center hover:bg-green-900/20 transition-colors">
+                            <i class="fa-brands fa-whatsapp text-2xl mb-2 text-green-500"></i>
+                            <div class="text-xs opacity-60 mb-1">WhatsApp Biz</div>
+                            <div class="text-xl font-bold text-white">100</div>
                          </div>
 
-                         <div class="bg-black/80 text-white p-4 rounded-lg text-center backdrop-blur-sm shadow-lg shadow-black/40 border border-slate-700">
-                            <i class="fa-brands fa-tiktok text-2xl mb-2"></i>
-                            <div class="text-xs opacity-80 mb-1">TikTok</div>
-                            <div class="text-xl font-bold">1,000</div>
-                            <div class="text-[10px] opacity-60">Views (Last 2 Vids)</div>
+                         <div class="glass-panel p-4 text-center hover:bg-gray-800/50 transition-colors">
+                            <i class="fa-brands fa-tiktok text-2xl mb-2 text-pink-500"></i>
+                            <div class="text-xs opacity-60 mb-1">TikTok</div>
+                            <div class="text-xl font-bold text-white">1K</div>
                          </div>
 
-                         <div class="bg-red-600/90 text-white p-4 rounded-lg text-center backdrop-blur-sm shadow-lg shadow-red-900/20 border border-red-500/30">
-                            <i class="fa-brands fa-youtube text-2xl mb-2"></i>
-                            <div class="text-xs opacity-80 mb-1">YouTube</div>
-                            <div class="text-xl font-bold">127 <span class="text-[10px] font-normal">Subs</span></div>
-                            <div class="text-[10px] opacity-60">2,800 Views</div>
+                         <div class="glass-panel p-4 text-center hover:bg-red-900/20 transition-colors">
+                            <i class="fa-brands fa-youtube text-2xl mb-2 text-red-500"></i>
+                            <div class="text-xs opacity-60 mb-1">YouTube</div>
+                            <div class="text-xl font-bold text-white">127</div>
                          </div>
 
-                         <div class="bg-pink-600/90 text-white p-4 rounded-lg text-center backdrop-blur-sm shadow-lg shadow-pink-900/20 border border-pink-500/30">
-                            <i class="fa-brands fa-instagram text-2xl mb-2"></i>
-                            <div class="text-xs opacity-80 mb-1">Instagram</div>
-                            <div class="text-xl font-bold">85K</div>
-                            <div class="text-[10px] opacity-60">Followers</div>
+                         <div class="glass-panel p-4 text-center hover:bg-pink-900/20 transition-colors">
+                            <i class="fa-brands fa-instagram text-2xl mb-2 text-pink-400"></i>
+                            <div class="text-xs opacity-60 mb-1">Instagram</div>
+                            <div class="text-xl font-bold text-white">85K</div>
                          </div>
 
-                         <div class="bg-slate-800/90 text-white p-4 rounded-lg text-center backdrop-blur-sm shadow-lg shadow-slate-900/20 border border-slate-600">
-                            <i class="fa-brands fa-x-twitter text-2xl mb-2"></i>
-                            <div class="text-xs opacity-80 mb-1">X</div>
-                            <div class="text-xl font-bold">45K</div>
-                            <div class="text-[10px] opacity-60">Followers</div>
+                         <div class="glass-panel p-4 text-center hover:bg-blue-900/10 transition-colors">
+                            <i class="fa-brands fa-x-twitter text-2xl mb-2 text-white"></i>
+                            <div class="text-xs opacity-60 mb-1">X</div>
+                            <div class="text-xl font-bold text-white">45K</div>
                          </div>
                     </div>
                 </div>
 
-                <div id="view-web" class="view-section hidden fade-in">
-                    <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm mb-6">
-                        <div class="flex justify-between items-end mb-4">
-                            <div>
-                                <h3 class="text-lg font-bold text-slate-200">Website Traffic</h3>
-                                <p class="text-sm text-slate-400">Unique visitors over time</p>
-                            </div>
-                            <div class="text-2xl font-bold text-spudy-primary">45,231 <span class="text-xs text-slate-400 font-normal">this month</span></div>
+                <div id="view-web" class="view-section hidden animate-fade-in-up">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-8 border-l-4 border-spudy-gold pl-4">Web Analytics</h2>
+
+                    <div class="glass-panel p-8 mb-8 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i class="fa-solid fa-globe text-9xl text-spudy-gold"></i>
                         </div>
-                        <div class="h-72">
+                        <div class="flex justify-between items-end mb-6 relative z-10">
+                            <div>
+                                <h3 class="text-2xl font-bold text-white">Global Traffic</h3>
+                                <p class="text-sm text-spudy-gold">Real-time visitor tracking</p>
+                            </div>
+                            <div class="text-4xl font-serif font-bold text-white">45,231 <span class="text-xs text-gray-500 font-sans font-normal block text-right mt-1">Visitors this month</span></div>
+                        </div>
+                        <div class="h-72 relative z-10">
                             <canvas id="chart-web-area"></canvas>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h4 class="font-bold text-slate-200 mb-3">Top Landing Pages</h4>
-                            <ul class="space-y-3">
-                                <li class="flex justify-between items-center text-sm">
-                                    <span class="text-slate-400">/home</span>
-                                    <span class="font-semibold text-slate-200">12,404</span>
-                                </li>
-                                <li class="w-full bg-slate-800 h-1 rounded-full overflow-hidden"><div class="bg-spudy-primary h-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" style="width: 80%"></div></li>
-                                
-                                <li class="flex justify-between items-center text-sm mt-2">
-                                    <span class="text-slate-400">/games/download</span>
-                                    <span class="font-semibold text-slate-200">8,200</span>
-                                </li>
-                                <li class="w-full bg-slate-800 h-1 rounded-full overflow-hidden"><div class="bg-spudy-primary h-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" style="width: 55%"></div></li>
-                                
-                                <li class="flex justify-between items-center text-sm mt-2">
-                                    <span class="text-slate-400">/library/search</span>
-                                    <span class="font-semibold text-slate-200">3,100</span>
-                                </li>
-                                <li class="w-full bg-slate-800 h-1 rounded-full overflow-hidden"><div class="bg-spudy-primary h-full shadow-[0_0_8px_rgba(99,102,241,0.5)]" style="width: 25%"></div></li>
-                            </ul>
-                        </div>
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm text-center flex flex-col justify-center">
-                            <h4 class="font-bold text-slate-200 mb-1">Bounce Rate</h4>
-                            <div class="text-4xl font-bold text-white mb-2">42.5%</div>
-                            <p class="text-sm text-emerald-400 mb-6"><i class="fa-solid fa-arrow-down"></i> 1.2% Improvement</p>
-                            
-                            <h4 class="font-bold text-slate-200 mb-1">Avg. Session</h4>
-                            <div class="text-4xl font-bold text-white">03:45</div>
-                            <p class="text-sm text-slate-400">Minutes</p>
-                        </div>
-                    </div>
                 </div>
 
-                <div id="view-games" class="view-section hidden fade-in">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <!-- Free Games Section -->
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h3 class="text-xl font-bold text-slate-200 mb-4 border-b border-slate-700 pb-2">Free Games Stats</h3>
+                <div id="view-games" class="view-section hidden animate-fade-in-up">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-8 border-l-4 border-spudy-gold pl-4">Spudy Games Studio</h2>
 
-                            <div class="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700 mb-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
+                        <div class="glass-panel p-6 border-t border-spudy-gold/50">
+                            <h3 class="text-xl font-bold text-white mb-6">Free Titles</h3>
+
+                            <div class="flex items-center justify-between p-5 bg-black/40 border border-gray-800 mb-4 hover:border-spudy-gold transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center mr-3">
+                                    <div class="w-12 h-12 bg-gray-900 text-spudy-gold flex items-center justify-center mr-4 text-xl">
                                         <i class="fa-solid fa-calculator"></i>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-white">Maths Quiz Master</h4>
-                                        <p class="text-xs text-slate-400">Educational</p>
+                                        <h4 class="font-bold text-white text-lg">Maths Quiz Master</h4>
+                                        <p class="text-xs text-gray-500 uppercase tracking-wider">Educational</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-2xl font-bold text-white">92</div>
-                                    <div class="text-[10px] text-slate-400 uppercase">Players (This Month)</div>
+                                    <div class="text-[10px] text-gray-500 uppercase">Monthly Players</div>
                                 </div>
                             </div>
 
-                            <div class="flex items-center justify-between p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <div class="flex items-center justify-between p-5 bg-black/40 border border-gray-800 hover:border-spudy-gold transition-colors">
                                 <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center mr-3">
+                                    <div class="w-12 h-12 bg-gray-900 text-spudy-gold flex items-center justify-center mr-4 text-xl">
                                         <i class="fa-solid fa-keyboard"></i>
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-white">Typing Speed Pro</h4>
-                                        <p class="text-xs text-slate-400">Utility</p>
+                                        <h4 class="font-bold text-white text-lg">Typing Speed Pro</h4>
+                                        <p class="text-xs text-gray-500 uppercase tracking-wider">Utility</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
                                     <div class="text-2xl font-bold text-white">54</div>
-                                    <div class="text-[10px] text-slate-400 uppercase">Total Plays</div>
+                                    <div class="text-[10px] text-gray-500 uppercase">Total Plays</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Premium Games Section -->
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                            <h3 class="text-xl font-bold text-slate-200 mb-4 border-b border-slate-700 pb-2">Premium Games</h3>
-                            <div class="bg-gradient-to-br from-purple-900/50 to-indigo-900/50 rounded-xl p-6 border border-purple-500/30 text-center relative overflow-hidden">
+                        <div class="glass-panel p-6 border-t border-spudy-gold/50">
+                            <h3 class="text-xl font-bold text-white mb-6 flex justify-between items-center">
+                                Premium Access
+                                <i class="fa-solid fa-crown text-spudy-gold"></i>
+                            </h3>
+                            <div class="bg-gradient-to-r from-spudy-gold/20 to-black p-8 text-center border border-spudy-gold/30 mb-6 relative overflow-hidden">
                                 <div class="relative z-10">
-                                    <i class="fa-solid fa-crown text-4xl text-yellow-400 mb-3 drop-shadow-lg"></i>
-                                    <h4 class="text-2xl font-bold text-white mb-1">28</h4>
-                                    <p class="text-purple-200 text-sm font-medium uppercase tracking-wide">Active Subscribers</p>
+                                    <h4 class="text-5xl font-serif font-bold text-white mb-2">28</h4>
+                                    <p class="text-spudy-gold text-sm font-bold uppercase tracking-widest">Gold Subscribers</p>
                                 </div>
-                                <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.2),transparent_70%)]"></div>
                             </div>
 
-                            <div class="mt-6">
+                            <div>
                                 <canvas id="chart-games-pie"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="view-library" class="view-section hidden fade-in">
+                <div id="view-library" class="view-section hidden animate-fade-in-up">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-8 border-l-4 border-spudy-gold pl-4">Digital Library</h2>
+
                     <!-- Featured Book -->
-                    <div class="bg-gradient-to-r from-slate-900 to-slate-800 p-6 rounded-xl shadow-lg border border-slate-700 mb-6 flex items-center justify-between relative overflow-hidden">
-                        <div class="relative z-10">
-                            <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold px-2 py-1 rounded mb-2 inline-block">MOST POPULAR</span>
-                            <h3 class="text-2xl font-bold text-white mb-1">Spudy the Legend of D9</h3>
-                            <p class="text-slate-400 text-sm mb-4">Fantasy / Adventure • Top Rated</p>
-                            <div class="flex items-center space-x-6">
-                                <div>
-                                    <div class="text-2xl font-bold text-white">1,402</div>
-                                    <div class="text-[10px] text-slate-400 uppercase">Downloads</div>
-                                </div>
-                                <div>
-                                    <div class="text-2xl font-bold text-white">4.9/5</div>
-                                    <div class="text-[10px] text-slate-400 uppercase">Rating</div>
+                    <div class="relative p-10 bg-black border border-spudy-gold/30 mb-8 overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-r from-spudy-gold/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center">
+                            <div>
+                                <span class="bg-spudy-gold text-black text-[10px] font-bold px-3 py-1 uppercase tracking-widest mb-3 inline-block">Bestseller</span>
+                                <h3 class="text-4xl font-serif font-bold text-white mb-2">Spudy the Legend of D9</h3>
+                                <p class="text-gray-400 text-sm mb-6 max-w-lg">An epic fantasy adventure that has captivated thousands. The journey continues in this exclusive digital edition.</p>
+                                <div class="flex items-center space-x-8 border-t border-gray-800 pt-6">
+                                    <div>
+                                        <div class="text-3xl font-bold text-white">1,402</div>
+                                        <div class="text-[10px] text-spudy-gold uppercase tracking-wider">Downloads</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-3xl font-bold text-white">4.9</div>
+                                        <div class="text-[10px] text-spudy-gold uppercase tracking-wider">Rating</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="hidden md:block text-slate-700 opacity-20">
-                            <i class="fa-solid fa-book-journal-whills text-9xl"></i>
+                            <div class="mt-8 md:mt-0 opacity-80">
+                                <i class="fa-solid fa-book-journal-whills text-[150px] text-spudy-gold/20"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl border-l-4 border-spudy-secondary shadow-lg shadow-black/20 backdrop-blur-sm">
-                            <div class="text-slate-400 text-sm">Total Reads</div>
-                            <div class="text-2xl font-bold text-white">145,200</div>
-                        </div>
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl border-l-4 border-spudy-accent shadow-lg shadow-black/20 backdrop-blur-sm">
-                            <div class="text-slate-400 text-sm">PDF Downloads</div>
-                            <div class="text-2xl font-bold text-white">32,100</div>
-                        </div>
-                        <div class="bg-spudy-surface/60 p-6 rounded-xl border-l-4 border-purple-500 shadow-lg shadow-black/20 backdrop-blur-sm">
-                            <div class="text-slate-400 text-sm">Active Contributors</div>
-                            <div class="text-2xl font-bold text-white">854</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-spudy-surface/60 p-6 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm">
-                        <h3 class="font-bold text-slate-200 mb-4">Content Category Popularity</h3>
+                    <div class="glass-panel p-6 border-b-4 border-spudy-gold">
+                        <h3 class="font-bold text-white mb-6">Genre Distribution</h3>
                         <div class="h-64">
                             <canvas id="chart-library-bar"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <div id="view-reports" class="view-section hidden fade-in">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <!-- Subscribers List -->
-                        <div class="bg-spudy-surface/60 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-                            <div class="px-6 py-4 border-b border-slate-700/50 flex justify-between items-center">
-                                <h3 class="font-bold text-slate-200">Latest Subscribers</h3>
-                                <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2 py-1 rounded border border-indigo-500/30">Total: 28</span>
+                <div id="view-reports" class="view-section hidden animate-fade-in-up">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-8 border-l-4 border-spudy-gold pl-4">Data Reports</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="glass-panel overflow-hidden border border-gray-800">
+                            <div class="px-6 py-4 border-b border-gray-800 flex justify-between items-center bg-spudy-gold/5">
+                                <h3 class="font-bold text-white">Latest Premium Subscribers</h3>
+                                <span class="bg-spudy-gold/20 text-spudy-gold text-xs px-2 py-1 font-mono">Total: 28</span>
                             </div>
-                            <div class="max-h-96 overflow-y-auto">
-                                <table class="w-full text-sm text-left text-slate-400">
-                                    <thead class="text-xs text-slate-500 uppercase bg-slate-800/50 sticky top-0">
+                            <div class="max-h-96 overflow-y-auto custom-scrollbar">
+                                <table class="w-full text-sm text-left text-gray-400">
+                                    <thead class="text-xs text-gray-500 uppercase bg-black sticky top-0">
                                         <tr>
-                                            <th class="px-6 py-3">User</th>
-                                            <th class="px-6 py-3">Email</th>
-                                            <th class="px-6 py-3">Plan</th>
-                                            <th class="px-6 py-3">Joined</th>
+                                            <th class="px-6 py-4">User</th>
+                                            <th class="px-6 py-4">Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-700/50">
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Michael Brooks</td><td class="px-6 py-3 text-slate-500">m.brooks92@gmail.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">2 hours ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Lisa Chen</td><td class="px-6 py-3 text-slate-500">lisa.chen@yahoo.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">5 hours ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">David Thompson</td><td class="px-6 py-3 text-slate-500">d.thompson@outlook.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">1 day ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Emily Rodriguez</td><td class="px-6 py-3 text-slate-500">emily.r123@gmail.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">2 days ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">James Wilson</td><td class="px-6 py-3 text-slate-500">jwilson88@hotmail.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">3 days ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Sophie Martin</td><td class="px-6 py-3 text-slate-500">sophie.m@live.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">3 days ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Daniel Anderson</td><td class="px-6 py-3 text-slate-500">danderson@gmail.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">4 days ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Olivia Taylor</td><td class="px-6 py-3 text-slate-500">liv.taylor@yahoo.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">5 days ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">William Thomas</td><td class="px-6 py-3 text-slate-500">w.thomas55@outlook.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">6 days ago</td></tr>
-                                        <tr class="hover:bg-white/5 transition-colors"><td class="px-6 py-3">Isabella White</td><td class="px-6 py-3 text-slate-500">bella.white@gmail.com</td><td class="px-6 py-3"><span class="text-emerald-400">Premium</span></td><td class="px-6 py-3">1 week ago</td></tr>
+                                    <tbody class="divide-y divide-gray-800">
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4"><div class="font-bold text-white">Michael Brooks</div><div class="text-xs">m.brooks92@gmail.com</div></td><td class="px-6 py-4 text-spudy-gold text-xs font-bold uppercase">Gold Tier</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4"><div class="font-bold text-white">Lisa Chen</div><div class="text-xs">lisa.chen@yahoo.com</div></td><td class="px-6 py-4 text-spudy-gold text-xs font-bold uppercase">Gold Tier</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4"><div class="font-bold text-white">David Thompson</div><div class="text-xs">d.thompson@outlook.com</div></td><td class="px-6 py-4 text-spudy-gold text-xs font-bold uppercase">Gold Tier</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4"><div class="font-bold text-white">Emily Rodriguez</div><div class="text-xs">emily.r123@gmail.com</div></td><td class="px-6 py-4 text-spudy-gold text-xs font-bold uppercase">Gold Tier</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4"><div class="font-bold text-white">James Wilson</div><div class="text-xs">jwilson88@hotmail.com</div></td><td class="px-6 py-4 text-spudy-gold text-xs font-bold uppercase">Gold Tier</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <!-- Play Stats -->
-                        <div class="bg-spudy-surface/60 rounded-xl shadow-lg shadow-black/20 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-                            <div class="px-6 py-4 border-b border-slate-700/50">
-                                <h3 class="font-bold text-slate-200">Recent Play Stats</h3>
+                        <div class="glass-panel overflow-hidden border border-gray-800">
+                            <div class="px-6 py-4 border-b border-gray-800 bg-spudy-gold/5">
+                                <h3 class="font-bold text-white">Recent Game Sessions</h3>
                             </div>
-                            <div class="max-h-96 overflow-y-auto">
-                                <table class="w-full text-sm text-left text-slate-400">
-                                    <thead class="text-xs text-slate-500 uppercase bg-slate-800/50 sticky top-0">
+                            <div class="max-h-96 overflow-y-auto custom-scrollbar">
+                                <table class="w-full text-sm text-left text-gray-400">
+                                    <thead class="text-xs text-gray-500 uppercase bg-black sticky top-0">
                                         <tr>
-                                            <th class="px-6 py-3">Game</th>
-                                            <th class="px-6 py-3">Player</th>
-                                            <th class="px-6 py-3 text-right">Score</th>
+                                            <th class="px-6 py-4">Game</th>
+                                            <th class="px-6 py-4">Score</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-700/50">
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Maths Quiz</td>
-                                            <td class="px-6 py-3">Player_One</td>
-                                            <td class="px-6 py-3 text-right font-mono text-indigo-400">980</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Typing Pro</td>
-                                            <td class="px-6 py-3">FastFingers</td>
-                                            <td class="px-6 py-3 text-right font-mono text-cyan-400">120 WPM</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Maths Quiz</td>
-                                            <td class="px-6 py-3">AlgebraKing</td>
-                                            <td class="px-6 py-3 text-right font-mono text-indigo-400">850</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Space Quest</td>
-                                            <td class="px-6 py-3">CosmicVoyager</td>
-                                            <td class="px-6 py-3 text-right font-mono text-purple-400">Lvl 12</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Typing Pro</td>
-                                            <td class="px-6 py-3">QwertyMaster</td>
-                                            <td class="px-6 py-3 text-right font-mono text-cyan-400">95 WPM</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Maths Quiz</td>
-                                            <td class="px-6 py-3">PiHunter</td>
-                                            <td class="px-6 py-3 text-right font-mono text-indigo-400">720</td>
-                                        </tr>
-                                        <tr class="hover:bg-white/5 transition-colors">
-                                            <td class="px-6 py-3 font-medium text-white">Space Quest</td>
-                                            <td class="px-6 py-3">StarLord</td>
-                                            <td class="px-6 py-3 text-right font-mono text-purple-400">Lvl 8</td>
-                                        </tr>
+                                    <tbody class="divide-y divide-gray-800">
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4 text-white">Maths Quiz</td><td class="px-6 py-4 text-right font-mono text-spudy-gold">980</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4 text-white">Typing Pro</td><td class="px-6 py-4 text-right font-mono text-spudy-gold">120 WPM</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4 text-white">Maths Quiz</td><td class="px-6 py-4 text-right font-mono text-spudy-gold">850</td></tr>
+                                        <tr class="hover:bg-spudy-gold/5 transition-colors"><td class="px-6 py-4 text-white">Space Quest</td><td class="px-6 py-4 text-right font-mono text-spudy-gold">Lvl 12</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -670,14 +623,19 @@
 
             </div>
             
-            <footer class="bg-spudy-surface/80 border-t border-slate-700/50 py-3 px-8 text-xs text-slate-500 flex justify-between backdrop-blur-md">
-                <span>&copy; 2026 Spudy Intelligence Group. All rights reserved.</span>
-                <span>System v2.4.0</span>
+            <footer class="bg-black/80 border-t border-gray-900 py-4 px-10 text-[10px] text-gray-600 flex justify-between uppercase tracking-widest backdrop-blur-md">
+                <span>&copy; 2026 Spudy Intelligence Group</span>
+                <span>Gold Member Access • v3.0.0</span>
             </footer>
         </main>
     </div>
 
     <script>
+        // === Set Date ===
+        const today = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.querySelectorAll('.date-display').forEach(el => el.innerText = today.toLocaleDateString('en-US', options));
+
         // === Login Logic ===
         function handleLogin(e) {
             e.preventDefault();
@@ -692,7 +650,9 @@
                 errorDiv.classList.add('hidden');
 
                 // Animate out
+                overlay.style.transition = 'all 0.8s ease-in-out';
                 overlay.style.opacity = '0';
+                overlay.style.transform = 'scale(1.1)';
                 overlay.style.pointerEvents = 'none';
 
                 // Animate in dashboard
@@ -700,7 +660,7 @@
 
                 setTimeout(() => {
                     overlay.classList.add('hidden');
-                }, 500);
+                }, 800);
             } else {
                 // Error
                 errorDiv.classList.remove('hidden');
@@ -711,19 +671,19 @@
             }
         }
 
-        // Store Chart instances to destroy them before re-rendering (prevents canvas reuse errors)
+        // Store Chart instances
         let chartInstances = {};
 
         // === Navigation Logic ===
         function switchView(viewName) {
             // Update Title
             const titles = {
-                'overview': 'Dashboard Overview',
-                'social': 'Social Media Analytics',
-                'web': 'Website Performance',
-                'games': 'Spudy Games Studio',
-                'library': 'Spudy Digital Library',
-                'reports': 'Detailed Data Reports'
+                'overview': 'Overview',
+                'social': 'Social Intelligence',
+                'web': 'Web Analytics',
+                'games': 'Games Studio',
+                'library': 'Digital Library',
+                'reports': 'Data Reports'
             };
             document.getElementById('page-title').innerText = titles[viewName];
 
@@ -733,43 +693,47 @@
             });
 
             // Show selected section
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            const viewEl = document.getElementById(`view-${viewName}`);
+            viewEl.classList.remove('hidden');
+            viewEl.classList.remove('animate-fade-in-up'); // reset animation
+            void viewEl.offsetWidth; // trigger reflow
+            viewEl.classList.add('animate-fade-in-up');
 
             // Update Sidebar Active State
             document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('active', 'bg-slate-50', 'text-spudy-primary');
-                el.classList.add('text-slate-600');
+                el.classList.remove('active', 'text-white');
+                el.classList.add('text-gray-400');
             });
             const activeNav = document.getElementById(`nav-${viewName}`);
             activeNav.classList.add('active');
-            activeNav.classList.remove('text-slate-600');
+            activeNav.classList.remove('text-gray-400');
+            activeNav.classList.add('text-white');
 
-            // Trigger Chart Render for that section
+            // Trigger Chart Render
             renderChartsForView(viewName);
             
-            // Close mobile menu if open
-            const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('hidden') && window.innerWidth < 768) {
-                sidebar.classList.add('hidden');
+            // Close mobile menu
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('hidden');
             }
         }
 
         // === Chart Configuration & Data ===
         function renderChartsForView(view) {
-            // Shared config
+            // Gold Theme Config
             Chart.defaults.font.family = "'Inter', sans-serif";
-            Chart.defaults.color = '#94a3b8'; // Slate 400
-            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.05)';
+            Chart.defaults.color = '#6b7280';
+            Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.1)';
             
             const commonOptions = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 20 } }
+                    legend: { labels: { color: '#9ca3af', usePointStyle: true } }
                 },
                 scales: {
-                    y: { grid: { borderDash: [4, 4], color: 'rgba(255, 255, 255, 0.05)' }, beginAtZero: true, ticks: { color: '#64748b' } },
-                    x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                    y: { grid: { borderDash: [2, 4], color: 'rgba(212, 175, 55, 0.05)' }, ticks: { color: '#9ca3af' } },
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
                 }
             };
 
@@ -777,68 +741,63 @@
             if (view === 'overview') {
                 const ctx = document.getElementById('chart-overview-main').getContext('2d');
                 const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); // Indigo
-                gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+                gradient.addColorStop(0, 'rgba(212, 175, 55, 0.4)');
+                gradient.addColorStop(1, 'rgba(212, 175, 55, 0.0)');
 
                 createChart('chart-overview-main', 'line', {
                     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                     datasets: [{
-                        label: 'Spudy Games',
+                        label: 'Total Traffic',
                         data: [120, 190, 300, 250, 200, 350, 400],
-                        borderColor: '#6366f1', // Indigo 500
+                        borderColor: '#D4AF37',
                         backgroundColor: gradient,
                         fill: true,
                         tension: 0.4,
                         borderWidth: 2,
-                        pointBackgroundColor: '#0B0F19',
-                        pointBorderColor: '#6366f1',
-                        pointBorderWidth: 2
+                        pointBackgroundColor: '#000',
+                        pointBorderColor: '#D4AF37'
                     }, {
-                        label: 'Library Access',
+                        label: 'Unique',
                         data: [80, 100, 110, 140, 130, 170, 190],
-                        borderColor: '#8b5cf6', // Violet 500
+                        borderColor: '#525252',
                         borderDash: [5, 5],
                         fill: false,
                         tension: 0.4,
                         borderWidth: 2,
-                        pointBackgroundColor: '#0B0F19',
-                        pointBorderColor: '#8b5cf6'
+                        pointBackgroundColor: '#000'
                     }]
                 }, commonOptions);
 
                 createChart('chart-overview-pie', 'doughnut', {
-                    labels: ['Social', 'Direct', 'Organic', 'Referral'],
+                    labels: ['Social', 'Direct', 'Organic'],
                     datasets: [{
-                        data: [35, 25, 30, 10],
-                        backgroundColor: ['#6366f1', '#8b5cf6', '#d946ef', '#334155'],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        data: [45, 30, 25],
+                        backgroundColor: ['#D4AF37', '#78350f', '#262626'],
+                        borderColor: '#000',
+                        borderWidth: 2
                     }]
-                }, { ...commonOptions, scales: {} }); // Remove scales for pie
+                }, { ...commonOptions, scales: {} });
             }
 
             // SOCIAL CHARTS
             if (view === 'social') {
                 createChart('chart-social-bar', 'bar', {
-                    labels: ['Facebook', 'Instagram', 'TikTok', 'X', 'YouTube'],
+                    labels: ['FB', 'IG', 'TT', 'X', 'YT'],
                     datasets: [{
-                        label: 'Followers (Thousands)',
+                        label: 'Followers (K)',
                         data: [120, 85, 210, 45, 92],
-                        backgroundColor: ['#3b82f6', '#ec4899', '#f8fafc', '#94a3b8', '#ef4444'],
-                        borderRadius: 4,
-                        barPercentage: 0.6
+                        backgroundColor: '#D4AF37',
+                        borderRadius: 2
                     }]
                 }, commonOptions);
 
                 createChart('chart-social-line', 'line', {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    labels: ['W1', 'W2', 'W3', 'W4'],
                     datasets: [{
-                        label: 'Engagement Rate (%)',
+                        label: 'Engagement %',
                         data: [4.2, 4.5, 4.1, 5.2],
-                        borderColor: '#10b981',
-                        tension: 0.3,
-                        pointBackgroundColor: '#0B0F19',
-                        pointBorderWidth: 2
+                        borderColor: '#FCD34D',
+                        tension: 0.3
                     }]
                 }, commonOptions);
             }
@@ -847,21 +806,18 @@
             if (view === 'web') {
                 const ctx = document.getElementById('chart-web-area').getContext('2d');
                 const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
-                gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+                gradient.addColorStop(0, 'rgba(212, 175, 55, 0.5)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0.0)');
 
                 createChart('chart-web-area', 'line', {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                     datasets: [{
-                        label: 'Unique Visitors',
+                        label: 'Visitors',
                         data: [30000, 35000, 32000, 40000, 42000, 45231],
-                        borderColor: '#3b82f6',
+                        borderColor: '#D4AF37',
                         backgroundColor: gradient,
                         fill: true,
-                        tension: 0.4,
-                        borderWidth: 2,
-                        pointBackgroundColor: '#0B0F19',
-                        pointBorderWidth: 2
+                        tension: 0.4
                     }]
                 }, commonOptions);
             }
@@ -869,12 +825,11 @@
             // GAMES CHARTS
             if (view === 'games') {
                 createChart('chart-games-pie', 'pie', {
-                    labels: ['Cyber Runner', 'Spudy Puzzle', 'Space Quest', 'Others'],
+                    labels: ['Quiz', 'Puzzle', 'Space', 'Other'],
                     datasets: [{
                         data: [45, 25, 20, 10],
-                        backgroundColor: ['#6366f1', '#22d3ee', '#8b5cf6', '#334155'],
-                        borderWidth: 0,
-                        hoverOffset: 10
+                        backgroundColor: ['#D4AF37', '#92400E', '#FCD34D', '#333'],
+                        borderColor: '#000'
                     }]
                 }, { ...commonOptions, scales: {} });
             }
@@ -882,68 +837,35 @@
             // LIBRARY CHARTS
             if (view === 'library') {
                 createChart('chart-library-bar', 'bar', {
-                    labels: ['Technology', 'Science', 'Fiction', 'Business', 'Art'],
+                    labels: ['Tech', 'Sci', 'Fic', 'Biz', 'Art'],
                     datasets: [{
-                        label: 'Downloads by Category',
+                        label: 'Downloads',
                         data: [650, 400, 300, 550, 200],
-                        backgroundColor: '#8b5cf6',
-                        borderRadius: 4,
-                        barPercentage: 0.6
+                        backgroundColor: '#D4AF37',
                     }]
                 }, commonOptions);
             }
         }
 
-        // Helper to destroy old chart and create new one
         function createChart(canvasId, type, data, options) {
             const ctx = document.getElementById(canvasId).getContext('2d');
-            
-            // Destroy existing if present
             if (chartInstances[canvasId]) {
                 chartInstances[canvasId].destroy();
             }
-
-            chartInstances[canvasId] = new Chart(ctx, {
-                type: type,
-                data: data,
-                options: options
-            });
+            chartInstances[canvasId] = new Chart(ctx, { type, data, options });
         }
 
-        // === UI Interactions ===
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-            sidebar.classList.toggle('absolute');
-            sidebar.classList.toggle('h-full');
-            sidebar.classList.toggle('w-64');
-            sidebar.classList.toggle('bg-white');
-            sidebar.classList.toggle('shadow-xl');
-        }
-
-        function exportReport() {
-            const btn = event.currentTarget;
-            const originalText = btn.innerHTML;
-            
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin w-5"></i> <span class="ml-3 text-sm font-medium">Generating...</span>';
-            
-            setTimeout(() => {
-                alert("Report for Spudy Intelligence Group has been generated and downloaded as PDF.");
-                btn.innerHTML = originalText;
-            }, 1500);
+            document.getElementById('sidebar').classList.toggle('hidden');
         }
 
         function updateData() {
-            // Mock function to simulate data change animation
             const mainContent = document.getElementById('main-scroll');
             mainContent.style.opacity = '0.5';
-            setTimeout(() => {
-                mainContent.style.opacity = '1';
-                // In a real app, this would fetch new JSON data
-            }, 300);
+            setTimeout(() => { mainContent.style.opacity = '1'; }, 300);
         }
 
-        // Initialize Default View
+        // Init
         document.addEventListener('DOMContentLoaded', () => {
             switchView('overview');
         });
